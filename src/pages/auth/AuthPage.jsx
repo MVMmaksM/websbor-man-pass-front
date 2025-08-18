@@ -9,6 +9,7 @@ export const AuthPage = () => {
     const [password, setPassword] = useState('');
     const [isDisabledBtn, setIsDisbaledBtn] = useState(false);
     const [errorMessage, setErrorMessage] = useState('')
+    const [buttonText, setButtonText] = useState('Войти')
 
     const onLoginChanged = (e) => setLogin(e.target.value);
     const onPasswordChanged = (e) => setPassword(e.target.value); 
@@ -25,14 +26,18 @@ export const AuthPage = () => {
         document.title = 'Аутентификация'
 
         if(authStatus === 'in progress'){            
-            setIsDisbaledBtn(true)
+            //setIsDisbaledBtn(true)
             setErrorMessage('')
+            setButtonText(<div class="spinner-border text-white" role="status"></div>)
         }
         else if(authStatus === 'success'){
+            setIsDisbaledBtn(false)
             window.location = '/main'
+            setButtonText("Войти")
         } else if(authStatus === 'fail'){   
             setErrorMessage(error?.message)
             setIsDisbaledBtn(false)
+            setButtonText("Войти")
         }
 
     }, [authStatus, error, setIsDisbaledBtn])
@@ -57,7 +62,7 @@ export const AuthPage = () => {
                                 </div>  
                                 <p className="text-danger text-center">{errorMessage}</p>
                                 <p className="text-center">
-                                    <button className='btn btn-primary' disabled={isDisabledBtn} type='button' onClick={onAuthClick}>Войти</button>
+                                    <button className='btn btn-primary w-50' disabled={isDisabledBtn} type='button' onClick={onAuthClick}>{buttonText}</button>
                                 </p>                 
                             </form>
                         </div>                        

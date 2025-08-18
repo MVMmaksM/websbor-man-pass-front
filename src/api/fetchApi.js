@@ -7,7 +7,17 @@ export const post = async (url, body) =>{
         body: JSON.stringify(body)
     }
 
-    const responce = await fetch(url, config)
-    const responceData = await responce.json();
-    return responceData;
+    const response = await fetch(url, config)
+
+    await handleErrors(response);
+
+    const responseData = await response.json();
+    return responseData;
+}
+
+const handleErrors = async(response) => {
+    if(!response.ok){
+        const responceData = await response.json();
+        throw new Error(responceData.details)
+    }
 }
