@@ -1,6 +1,7 @@
 export const post = async (url, body) =>{
     const config = {
         method: "POST",
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
         },

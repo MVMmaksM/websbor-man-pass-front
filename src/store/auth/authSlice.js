@@ -9,7 +9,7 @@ const initialState = {
 export const fetchAuth = createAsyncThunk(
     "auth/fetchAuth",
     async (credential) =>{
-        const responce = await post("http://localhost:3000/api/v1/auth", credential);
+        const responce = await post("http://localhost:3000/api/v1/auth/login", credential);
         return responce;
     }
 )    

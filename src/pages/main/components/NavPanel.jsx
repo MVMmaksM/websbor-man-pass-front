@@ -3,16 +3,26 @@ import { Profile } from "./Profile"
 
 export const NavPanel = () => {
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
             <div className="container-fluid">
                 <div className="d-flex justify-content-center w-100">
-                    <ul className="nav nav-pills">
+                    <ul id="menu" className="nav nav-pills">
+                        <li className="nav-item">
+                            <NavLink
+                                to="/main"
+                                className={({ isActive }) =>
+                                    `nav-link ${isActive ? 'active' : ''}`
+                                }                               
+                            >
+                                Главная
+                            </NavLink>
+                        </li>
                         <li className="nav-item">
                             <NavLink
                                 to="/main/respondents"
                                 className={({ isActive }) =>
-                                    `nav-link ${isActive ? 'text-muted' : 'text-primary'}`
-                                }
+                                    `nav-link  ${isActive ? 'active' : ''}`
+                                }                               
                             >
                                 Учетные данные респондентов
                             </NavLink>
@@ -20,7 +30,9 @@ export const NavPanel = () => {
                         <li className="nav-item">
                             <NavLink
                                 to="/main/catalog"
-                                className="nav-link text-dark"
+                                className={({ isActive }) =>
+                                    `nav-link ${isActive ? 'active' : ''}`
+                                }     
                             >
                                 Каталог Web-сбора
                             </NavLink>
@@ -28,7 +40,9 @@ export const NavPanel = () => {
                         <li className="nav-item">
                             <NavLink
                                 to="/main/users"
-                                className="nav-link text-dark"
+                                className={({ isActive }) =>
+                                    `nav-link ${isActive ? 'active' : ''}`
+                                }   
                             >
                                 Пользователи
                             </NavLink>
@@ -36,14 +50,14 @@ export const NavPanel = () => {
                         <li className="nav-item">
                             <NavLink
                                 to="/main/logs"
-                                className="nav-link text-dark"
+                                className={({ isActive }) =>
+                                    `nav-link ${isActive ? 'active' : ''}`
+                                }   
                             >
                                 Activity log
                             </NavLink>
                         </li>
-                    </ul>
-                    {/* Иконка профиля — в правом верхнем углу навбара */}
-                    <Profile />
+                    </ul>                   
                 </div>
             </div>
         </nav>

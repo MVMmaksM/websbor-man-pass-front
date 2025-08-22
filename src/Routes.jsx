@@ -6,7 +6,7 @@ import {RespondentsPage} from "./pages/respondents/RespondentsPage";
 export const router = createBrowserRouter(
     [
         {
-            path: "/auth",
+            path: "/auth/login",
             element: <AuthPage />
         },
         {

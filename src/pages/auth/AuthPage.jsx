@@ -27,7 +27,7 @@ export const AuthPage = () => {
             setErrorMessage('')            
         }
         else if (authStatus === 'success') {         
-            window.location = '/main'
+            //window.location = '/main'
         } else if (authStatus === 'fail') {
             setErrorMessage(error?.message)            
         }
