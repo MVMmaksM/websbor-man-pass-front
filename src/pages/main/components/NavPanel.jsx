@@ -6,17 +6,7 @@ export const NavPanel = () => {
         <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
             <div className="container-fluid">
                 <div className="d-flex justify-content-center w-100">
-                    <ul id="menu" className="nav nav-pills">
-                        <li className="nav-item">
-                            <NavLink
-                                to="/main"
-                                className={({ isActive }) =>
-                                    `nav-link ${isActive ? 'active' : ''}`
-                                }                               
-                            >
-                                Главная
-                            </NavLink>
-                        </li>
+                    <ul id="menu" className="nav nav-pills">                        
                         <li className="nav-item">
                             <NavLink
                                 to="/main/respondents"

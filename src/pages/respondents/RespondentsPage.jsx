@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
+import { Filters } from './components/Filters';
+import { Table } from './components/Table';
 
-export const RespondentsPage = () =>{
-
-    useEffect(()=>{
-        document.title = "Учетные данные респондентов"
-    })
-
-    return(
-        <div>Res</div>
+export const RespondentsPage = () => {
+    return (
+        <>
+            <Filters />
+            <Table />
+        </>
     )
 }

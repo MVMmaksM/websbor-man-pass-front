@@ -1,22 +1,24 @@
 import { useState } from "react"
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect } from 'react';
-import { fetchAuth } from "../../store/auth/authSlice"
+import { fetchAuth, checkStatusAuth } from "../../store/auth/authSlice"
 import { useDispatch, useSelector } from 'react-redux'
 import { Spinner } from "../../components/Spinner"
 
 export const AuthPage = () => {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('')
+    const [showPassword, setShowPassword] = useState(false);
 
     const onLoginChanged = (e) => setLogin(e.target.value);
     const onPasswordChanged = (e) => setPassword(e.target.value);
-    const authStatus = useSelector(state => state.auth.status);
-    const error = useSelector(state => state.auth.error)
-    const dispatch = useDispatch();
 
-    const [showPassword, setShowPassword] = useState(false);
+    const fetchAuthLS = useSelector(state => state.auth.fetchAuthLS);
+    const checkAuthLS = useSelector(state => state.auth.checkAuthLS)
+    const authStatus = useSelector(state => state.auth?.authStatus?.isAuth);
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const togglePassword = () => {
         setShowPassword(!showPassword);
@@ -26,19 +28,18 @@ export const AuthPage = () => {
         dispatch(fetchAuth({ password, login }))
     }
 
-    useEffect(() => {
-        document.title = 'Аутентификация'
+    useEffect(() => {      
+        if(checkAuthLS === 'idle')
+            dispatch(checkStatusAuth());
+       
+        //если аутентифицирован, то редиректим с ауфа на маин
+        if (authStatus)
+            navigate('/main');
 
-        if (authStatus === 'in progress') {
-            setErrorMessage('')
-        }
-        else if (authStatus === 'success') {
-            //window.location = '/main'
-        } else if (authStatus === 'fail') {
-            setErrorMessage(error?.message)
-        }
+        if (fetchAuthLS === 'success')
+            navigate('/main');
 
-    }, [authStatus, error])
+    }, [fetchAuthLS, checkStatusAuth, authStatus])
 
     return (
         <div className="d-flex flex-column min-vh-100">
@@ -50,7 +51,7 @@ export const AuthPage = () => {
                 {/* Форма */}
                 <div style={{ maxWidth: '400px', width: '100%' }}>
                     <form>
-                        <div className="mb-3 text-center">             
+                        <div className="mb-3 text-center">
                             <input
                                 id="login"
                                 name="login"
@@ -63,7 +64,7 @@ export const AuthPage = () => {
                             />
                         </div>
 
-                        <div className="mb-3 text-center">                            
+                        <div className="mb-3 text-center">
                             <div className="input-group">
                                 <input
                                     type={showPassword ? 'text' : 'password'}
@@ -81,16 +82,12 @@ export const AuthPage = () => {
                                 >
                                     {showPassword ? (
                                         <i className="bi bi-eye-fill"></i>
-                                    ) : (                                      
+                                    ) : (
                                         <i className="bi bi-eye-slash-fill"></i>
                                     )}
                                 </button>
                             </div>
                         </div>
-
-                        {errorMessage && (
-                            <p className="text-danger text-center mb-3">{errorMessage}</p>
-                        )}
 
                         <div className="text-center">
                             <button
@@ -103,7 +100,7 @@ export const AuthPage = () => {
                         </div>
                     </form>
                 </div>
-                {authStatus === 'in progress' ? <Spinner /> : ""}
+                {fetchAuthLS === 'in progress' ? <Spinner /> : ""}
             </div>
         </div>
 

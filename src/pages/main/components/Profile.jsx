@@ -1,23 +1,34 @@
 import { useNavigate } from 'react-router-dom';
 import profileImg from "../../../../public/icon/profile.png"
+import { getProfile } from '../../../store/profile/profileSlice';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const Profile = () => {
 	const navigate = useNavigate();
+	const status = useSelector(state => state.profile.status);
+	const login = useSelector(state => state.profile.userData?.login)
+
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if (status === "idle")
+			dispatch(getProfile());
+	})
 
 	return (
 		<>
 			<div className="position-absolute top-0 end-0 p-3">
 				<div className="dropdown">
-					{/* Триггер dropdown — ссылка с именем и иконкой */}
 					<a
 						href="#"
 						className="text-white text-decoration-none d-flex align-items-center dropdown-toggle"
 						data-bs-toggle="dropdown"
 						aria-expanded="false"
 						role="button"
-						id="dropdownMenuLink"					
+						id="dropdownMenuLink"
 					>
-						<span className="me-2" style={{ fontSize: '15px' }}>admin</span>
+						<span className="me-2" style={{ fontSize: '15px' }}>{login}</span>
 						<img
 							src={profileImg}
 							alt="Профиль"
@@ -26,12 +37,17 @@ export const Profile = () => {
 						/>
 					</a>
 
-					{/* Выпадающее меню */}
 					<ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
 						<li>
-							<span className="dropdown-item-text" style={{ fontSize: '15px' }}>
-								admin
-							</span>
+							<button
+								className="dropdown-item"
+								type="button"
+								onClick={() => {
+									navigate("/main/profile")
+								}}
+							>
+								<span style={{ fontSize: '15px' }}>Перейти в профиль</span>
+							</button>
 						</li>
 						<li>
 							<hr className="dropdown-divider" />
@@ -41,7 +57,7 @@ export const Profile = () => {
 								className="dropdown-item"
 								type="button"
 								onClick={() => {
-									navigate("/auth/login")							
+									navigate("/auth/login")
 								}}
 							>
 								<span style={{ fontSize: '15px' }}>Выход</span>

@@ -3,11 +3,11 @@ import { ALERTTYPES } from "../store/alert/alertTypes.js";
 
 export const ErrorHandlerMiddleware = (store) => (next) => (action) => {
     if (action.type.endsWith('/rejected')) {
-        const { payload, error } = action;
-        const errorData = payload || error;
+        const { payload } = action;
+        const errorData = payload;   
 
-        const status = errorData.status;
-        const message = errorData.details || error.message || 'Неизвестная ошибка';
+        const status = Number(errorData?.status);
+        const message = errorData?.details || payload?.message || 'Неизвестная ошибка';
 
         switch (status) {
             case 400:
@@ -16,7 +16,6 @@ export const ErrorHandlerMiddleware = (store) => (next) => (action) => {
 
             case 401:      
                 store.dispatch(setAlert({ type: ALERTTYPES.FAIL, message: message }))
-
                 setTimeout(() => {
                     window.location.href = '/auth/login';
                 }, 2000);
@@ -26,7 +25,7 @@ export const ErrorHandlerMiddleware = (store) => (next) => (action) => {
                 store.dispatch(setAlert({ type: ALERTTYPES.FAIL, message: message }))
                 break;
 
-            case 404:
+            case 404:            
                 store.dispatch(setAlert({ type: ALERTTYPES.FAIL, message: message }))
                 break;
 
