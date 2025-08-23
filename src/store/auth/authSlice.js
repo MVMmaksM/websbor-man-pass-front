@@ -8,9 +8,13 @@ const initialState = {
 
 export const fetchAuth = createAsyncThunk(
     "auth/fetchAuth",
-    async (credential) =>{
-        const responce = await post("http://localhost:3000/api/v1/auth/login", credential);
-        return responce;
+    async (credential, { rejectWithValue }) =>{
+		try{
+			const responce = await post("http://localhost:3000/api/v1/auth/login", credential);
+        	return responce;
+		}catch(error){	
+			return rejectWithValue({...error});
+		}        
     }
 )    
 
@@ -26,8 +30,8 @@ const authSlice = createSlice({
 				state.status = 'success'				
 			})
 			.addCase(fetchAuth.rejected, (state, action) => {
-				state.status = 'fail'
-				state.error = action.error
+				state.status = 'fail'				
+				state.error = action.payload
 			})				
 		},
     } 

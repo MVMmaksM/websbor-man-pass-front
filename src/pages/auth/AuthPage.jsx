@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useEffect } from 'react';
 import { fetchAuth } from "../../store/auth/authSlice"
 import { useDispatch, useSelector } from 'react-redux'
-import {Spinner} from "../../components/Spinner"
+import { Spinner } from "../../components/Spinner"
 
 export const AuthPage = () => {
     const [login, setLogin] = useState('');
@@ -16,20 +16,26 @@ export const AuthPage = () => {
     const error = useSelector(state => state.auth.error)
     const dispatch = useDispatch();
 
+    const [showPassword, setShowPassword] = useState(false);
+
+    const togglePassword = () => {
+        setShowPassword(!showPassword);
+    };
+
     const onAuthClick = async () => {
-        dispatch(fetchAuth({ password, login }))        
+        dispatch(fetchAuth({ password, login }))
     }
 
     useEffect(() => {
         document.title = 'Аутентификация'
 
-        if (authStatus === 'in progress') {       
-            setErrorMessage('')            
+        if (authStatus === 'in progress') {
+            setErrorMessage('')
         }
-        else if (authStatus === 'success') {         
+        else if (authStatus === 'success') {
             //window.location = '/main'
         } else if (authStatus === 'fail') {
-            setErrorMessage(error?.message)            
+            setErrorMessage(error?.message)
         }
 
     }, [authStatus, error])
@@ -44,8 +50,7 @@ export const AuthPage = () => {
                 {/* Форма */}
                 <div style={{ maxWidth: '400px', width: '100%' }}>
                     <form>
-                        <div className="mb-3 text-center">
-                            <label htmlFor="login" className="form-label">Логин</label>
+                        <div className="mb-3 text-center">             
                             <input
                                 id="login"
                                 name="login"
@@ -54,20 +59,33 @@ export const AuthPage = () => {
                                 value={login}
                                 onChange={onLoginChanged}
                                 autoComplete="username"
+                                placeholder="Введите логин"
                             />
                         </div>
 
-                        <div className="mb-3 text-center">
-                            <label htmlFor="password" className="form-label">Пароль</label>
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                className="form-control"
-                                value={password}
-                                onChange={onPasswordChanged}
-                                autoComplete="current-password"
-                            />
+                        <div className="mb-3 text-center">                            
+                            <div className="input-group">
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    className="form-control"
+                                    id="password"
+                                    value={password}
+                                    onChange={onPasswordChanged}
+                                    autoComplete="current-password"
+                                    placeholder="Введите пароль"
+                                />
+                                <button
+                                    type="button"
+                                    className="btn btn-outline-secondary"
+                                    onClick={togglePassword}
+                                >
+                                    {showPassword ? (
+                                        <i className="bi bi-eye-fill"></i>
+                                    ) : (                                      
+                                        <i className="bi bi-eye-slash-fill"></i>
+                                    )}
+                                </button>
+                            </div>
                         </div>
 
                         {errorMessage && (
@@ -76,16 +94,16 @@ export const AuthPage = () => {
 
                         <div className="text-center">
                             <button
-                                className="btn btn-primary w-50"                               
+                                className="btn btn-primary w-50"
                                 onClick={onAuthClick}
                                 type="button"
                             >
-                            Войти
+                                Войти
                             </button>
                         </div>
                     </form>
                 </div>
-                {authStatus === 'in progress'? <Spinner /> : ""}
+                {authStatus === 'in progress' ? <Spinner /> : ""}
             </div>
         </div>
 

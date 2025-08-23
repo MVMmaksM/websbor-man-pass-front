@@ -1,5 +1,5 @@
 #menu {
-    align-items: center; 
+	align-items: center;
 }
 
 #menu a {
@@ -8,11 +8,29 @@
 	text-decoration: none;
 	color: black;
 }
-#menu a:hover, #menu a.active {
-	color: black;	
+
+#menu a:hover,
+#menu a.active {
+	color: black;
 	background-color: #e9ebee;
 }
 
 .dropdown-menu {
-  z-index: 1060 !important; /* Больше, чем у navbar */
+	z-index: 1060 !important;
+	/* Больше, чем у navbar */
+}
+
+#alert {
+	position: fixed;
+	top: 10px;
+	right: 0;
+	z-index: 10000;
+	padding: 12px 24px;
+	font-weight: 500;
+	font-size: 14px;
+	white-space: nowrap;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	border: none;
+	border-radius: 10;
+	animation: slideInRight 0.3s ease-out
 }

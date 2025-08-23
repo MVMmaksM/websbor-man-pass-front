@@ -1,6 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import profileImg from "../../../../public/icon/profile.png"
 
 export const Profile = () => {
+	const navigate = useNavigate();
+
 	return (
 		<>
 			<div className="position-absolute top-0 end-0 p-3">
@@ -38,11 +41,10 @@ export const Profile = () => {
 								className="dropdown-item"
 								type="button"
 								onClick={() => {
-									// Логика выхода
-									// Например: logout(); navigate('/login');
+									navigate("/auth/login")							
 								}}
 							>
-								Выход
+								<span style={{ fontSize: '15px' }}>Выход</span>
 							</button>
 						</li>
 					</ul>

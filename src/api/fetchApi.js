@@ -19,6 +19,10 @@ export const post = async (url, body) =>{
 const handleErrors = async(response) => {
     if(!response.ok){
         const responceData = await response.json();
-        throw new Error(responceData.details)
+        const error = new Error("");
+        error.status = response.status;
+        error.details = responceData.details;
+        
+        throw error;
     }
 }
