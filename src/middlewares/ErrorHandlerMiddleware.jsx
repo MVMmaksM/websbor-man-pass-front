@@ -14,7 +14,10 @@ export const ErrorHandlerMiddleware = (store) => (next) => (action) => {
                 store.dispatch(setAlert({ type: ALERTTYPES.FAIL, message: message }))
                 break;
 
-            case 401:      
+            case 401:   
+                if(location.pathname === "/auth/login")
+                    break;
+                   
                 store.dispatch(setAlert({ type: ALERTTYPES.FAIL, message: message }))
                 setTimeout(() => {
                     window.location.href = '/auth/login';

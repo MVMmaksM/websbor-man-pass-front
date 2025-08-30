@@ -10,7 +10,7 @@ export const MainPage = () => {
 			<div className="d-flex flex-column min-vh-100">
 				<Header />
 				{/* Основное содержимое */}
-				<main id="main_page" className="flex-grow-1">
+				<main id="main_page" className="flex-grow-1 bg-light">
 					<Outlet />
 				</main>
 			</div>

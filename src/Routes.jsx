@@ -1,9 +1,10 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { AuthPage } from "./pages/auth/AuthPage";
 import { MainPage } from "./pages/main/MainPage"
-import { RespondentsPage } from "./pages/respondents/RespondentsPage";
+import { RespListPage } from "./pages/resp/respList/RespListPage";
 import { NotFoundPage } from "./pages/notFound/NotFoundPage";
 import { PageTitle } from "./components/PageTitle";
+import { RespDetailPage } from "./pages/resp/respDetail/RespDetailPage";
 
 export const router = createBrowserRouter(
     [
@@ -18,6 +19,10 @@ export const router = createBrowserRouter(
 
         },
         {
+            path: "/",
+            element: <Navigate to="/main" />
+        },
+        {
             path: "/main",
             element: (
                 <>
@@ -26,13 +31,22 @@ export const router = createBrowserRouter(
                 </>),
             children: [
                 {
-                    path: "respondents",
+                    path: "resp",
                     element: (
                         <>
-                            <RespondentsPage />
+                            <RespListPage />
                             <PageTitle title={"Учетные данные респондентов"} />
                         </>)
+                },
+                {
+                    path: "resp/:resp_cred_id",
+                    element: (
+                        <>
+                            <RespDetailPage />
+                            <PageTitle title={"Детали респондента"} />
+                        </>)
                 }
+
             ]
         },
         {
@@ -40,7 +54,7 @@ export const router = createBrowserRouter(
             element: (
                 <>
                     <NotFoundPage />
-                    <PageTitle title={"Страница не найдена"}/>
+                    <PageTitle title={"Страница не найдена"} />
                 </>)
         }
     ]

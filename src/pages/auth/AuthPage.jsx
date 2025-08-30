@@ -43,12 +43,9 @@ export const AuthPage = () => {
 
     return (
         <div className="d-flex flex-column min-vh-100">
-            {/* Заголовок — вверху */}
             <h3 className="text-center mt-3">Система хранения учетных данных респондентов</h3>
-
-            {/* Центральная часть — автоматически растягивается */}
             <div className="flex-grow-1 d-flex align-items-center justify-content-center">
-                {/* Форма */}
+           
                 <div style={{ maxWidth: '400px', width: '100%' }}>
                     <form>
                         <div className="mb-3 text-center">

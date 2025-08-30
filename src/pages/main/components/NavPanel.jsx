@@ -9,7 +9,7 @@ export const NavPanel = () => {
                     <ul id="menu" className="nav nav-pills">                        
                         <li className="nav-item">
                             <NavLink
-                                to="/main/respondents"
+                                to="/main/resp"
                                 className={({ isActive }) =>
                                     `nav-link  ${isActive ? 'active' : ''}`
                                 }                               

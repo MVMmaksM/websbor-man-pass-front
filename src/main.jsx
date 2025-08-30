@@ -8,7 +8,6 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { AutoAlert } from './components/AutoAlert.jsx'
-import { PageTitle } from './components/PageTitle.jsx'
 
 createRoot(document.getElementById('root')).render(
 

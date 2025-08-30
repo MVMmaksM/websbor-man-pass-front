@@ -3,14 +3,14 @@ import authReducer from "./auth/authSlice"
 import { ErrorHandlerMiddleware } from '../middlewares/ErrorHandlerMiddleware'
 import alertReducer from "./alert/alertSlice" 
 import profileReducer from "./profile/profileSlice"
-import respondentsReducer from "./respondents/respondentsSlice"
+import respReducer from "./resp/respSlice"
 
 export default configureStore({
 	reducer: {
 		auth: authReducer,
 		alert: alertReducer,
 		profile: profileReducer,
-		respondents: respondentsReducer
+		resp: respReducer
 	},
 	middleware: (getDefaultMiddleware) =>
     	getDefaultMiddleware().concat(ErrorHandlerMiddleware),
