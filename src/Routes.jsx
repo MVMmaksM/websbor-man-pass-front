@@ -5,6 +5,8 @@ import { RespListPage } from "./pages/resp/respList/RespListPage";
 import { NotFoundPage } from "./pages/notFound/NotFoundPage";
 import { PageTitle } from "./components/PageTitle";
 import { RespDetailPage } from "./pages/resp/respDetail/RespDetailPage";
+import { CreateRespPage } from "./pages/resp/create/CreateRespPage";
+import { EditRespPage } from "./pages/resp/edit/EditRespPage";
 
 export const router = createBrowserRouter(
     [
@@ -45,8 +47,31 @@ export const router = createBrowserRouter(
                             <RespDetailPage />
                             <PageTitle title={"Детали респондента"} />
                         </>)
+                },
+                {
+                    path: "resp/create",
+                    element: (
+                        <>
+                            <CreateRespPage />
+                            <PageTitle title={"Добавить респондента"} />
+                        </>)
+                },
+                {
+                    path: "resp/edit/:resp_cred_id",
+                    element: (
+                        <>
+                            <EditRespPage />
+                            <PageTitle title={"Редактирование респондента"} />
+                        </>)
+                },
+                {
+                    path: "resp/:resp_cred_id/edit/:resp_cred_id",
+                    element: (
+                        <>
+                            <EditRespPage />
+                            <PageTitle title={"Редактирование респондента"} />
+                        </>)
                 }
-
             ]
         },
         {

@@ -24,7 +24,7 @@ export const AutoAlert = () => {
     const color = ALERTTYPES.FAIL === type ? "alert-danger" : "alert-success";
 
     return (
-        <div id="alert"         
+        <div id="auto_alert"         
             className={`alert ${color}`} role="alert" >
             <i className="bi bi-exclamation-circle text-danger fs-6" style={{ marginRight: '8px' }}></i>
             {message}

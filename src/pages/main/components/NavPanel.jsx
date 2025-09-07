@@ -6,7 +6,7 @@ export const NavPanel = () => {
         <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
             <div className="container-fluid">
                 <div className="d-flex justify-content-center w-100">
-                    <ul id="menu" className="nav nav-pills">                        
+                    <ul id="main_nav_panel" className="nav nav-pills">                        
                         <li className="nav-item">
                             <NavLink
                                 to="/main/resp"

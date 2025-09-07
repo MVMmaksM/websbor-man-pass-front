@@ -16,7 +16,7 @@ export const Header = ({ respDetail }) => {
                     </span>
                     <span>
                         <span className="text-secondary">Создал:</span>
-                        <strong> {respDetail.created_by}</strong>
+                        <strong> {respDetail.created_by_str}</strong>
                     </span>
                 </div>
             </div>

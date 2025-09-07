@@ -11,7 +11,7 @@ export const getProfile = createAsyncThunk(
     "profile/getProfile",
     async (_ ,{ rejectWithValue }) => {
         try {
-            const responce = await get("http://localhost:3000/api/v1/profile");            
+            const responce = await get("/profile");            
             return responce;
         } catch (error) {         
             const err = {};

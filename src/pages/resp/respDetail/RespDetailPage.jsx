@@ -44,7 +44,7 @@ export const RespDetailPage = () => {
             {getRespDetailLS === LOADING_STATUS.SUCCESS ?
                 <>
                     <Header respDetail={respDetail}/>
-                    <ButtonPanel />
+                    <ButtonPanel resp_cred_id={resp_cred_id}/>
                     <RespForm respDetail={respDetail} />
                 </>
                 : ""}

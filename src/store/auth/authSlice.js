@@ -1,20 +1,27 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { post, get } from "../../api/fetchApi"
+import {LOADING_STATUS} from "../../constants/loadingStatus.js";
 
 const initialState = {
-	fetchAuthLS: "idle",
-	fetchAuthError: null,
-
-	checkAuthLS: "idle",
+	//login
+	loginLS: LOADING_STATUS.IDLE,
+	loginError: null,
+	loginStatus: null,
+	//check auth
+	checkAuthLS: LOADING_STATUS.IDLE,
 	checkAuthError: null,
-	authStatus: null	
+	checkAuthStatus: null,	
+	//logout
+	logoutLS:LOADING_STATUS.IDLE,
+	logoutError: null,
+	logoutStatus: null
 }
 
-export const fetchAuth = createAsyncThunk(
-	"auth/fetchAuth",
+export const authLogin = createAsyncThunk(
+	"auth/authLogin",
 	async (credential, { rejectWithValue }) => {
 		try {
-			const responce = await post("http://localhost:3000/api/v1/auth/login", credential);
+			const responce = await post("/auth/login", credential);
 			return responce;
 		} catch (error) {
 			const err = {};
@@ -34,11 +41,11 @@ export const fetchAuth = createAsyncThunk(
 	}
 )
 
-export const checkStatusAuth = createAsyncThunk(
-	"auth/checkStatusAuth",
+export const checkAuth = createAsyncThunk(
+	"auth/checkAuth",
 	async (_, {rejectWithValue} ) => {
 		try {
-			const responce = await get("http://localhost:3000/api/v1/auth/cookie/status");
+			const responce = await get("/auth/cookie/status");
 			return responce;
 		} catch (error) {
 			const err = {};
@@ -63,25 +70,26 @@ const authSlice = createSlice({
 	initialState,
 	extraReducers(builder) {
 		builder
-			.addCase(fetchAuth.pending, (state) => {
-				state.fetchAuthLS = 'in progress'
+			.addCase(authLogin.pending, (state) => {
+				state.loginLS = LOADING_STATUS.IN_PROGRESS
 			})
-			.addCase(fetchAuth.fulfilled, (state) => {
-				state.fetchAuthLS = 'success'
+			.addCase(authLogin.fulfilled, (state, action) => {
+				state.loginLS = LOADING_STATUS.SUCCESS
+				state.loginStatus = action.payload
 			})
-			.addCase(fetchAuth.rejected, (state, action) => {
-				state.fetchAuthLS = 'fail'
-				state.fetchAuthError = action.payload
+			.addCase(authLogin.rejected, (state, action) => {
+				state.loginLS = LOADING_STATUS.FAIL
+				state.loginError = action.payload
 			})
-			.addCase(checkStatusAuth.pending, (state) => {
-				state.checkAuthLS = 'in progress'
+			.addCase(checkAuth.pending, (state) => {
+				state.checkAuthLS = LOADING_STATUS.IN_PROGRESS
 			})
-			.addCase(checkStatusAuth.fulfilled, (state, action) => {
-				state.checkAuthLS = 'success'
-				state.authStatus = action.payload
+			.addCase(checkAuth.fulfilled, (state, action) => {
+				state.checkAuthLS = LOADING_STATUS.SUCCESS
+				state.checkAuthStatus = action.payload
 			})
-			.addCase(checkStatusAuth.rejected, (state, action) => {				
-				state.checkAuthLS = 'fail'
+			.addCase(checkAuth.rejected, (state, action) => {				
+				state.checkAuthLS = LOADING_STATUS.FAIL
 				state.checkAuthError = action.payload				
 			})
 			

@@ -11,7 +11,7 @@ export const Table = () => {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(getRespList({limit: 200, offset: 0}));
+        dispatch(getRespList({ limit: 200, offset: 0 }));
     }, [])
 
     return (
