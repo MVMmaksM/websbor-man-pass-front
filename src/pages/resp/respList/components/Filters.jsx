@@ -1,24 +1,71 @@
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
-import { getRespList } from "../../../../store/resp/respSlice.js";
-import { toLocalISOString } from "../../toLocalISOString.js";
+import { toLocalISOString } from "../../../../utils/toLocalISOString.js";
 import { CustomDatePicker } from "../../../../components/CustomDatePicker.jsx";
 import { CustomSelect } from "../../../../components/CustomSelect.jsx";
 import { getUsersList } from "../../../../store/users/usersSlice.js";
 import { LOADING_STATUS } from "../../../../constants/loadingStatus.js";
 import { useNavigate } from "react-router-dom";
+import { getRespList, setFilter, clearFilter, clearPagination } from "../../../../store/resp/respSlice.js";
 
 export const Filters = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const [userFilter, setUserFilter] = useState([]);
-    const [filter, setFilter] = useState({
+    const defaultLocalStateFilter = {};
+    const defaultStatePagination = {
         limit: 200,
-        offset: 0,
-        okpo: '',
-        resp_cred_id: '',
-        name: ''
-    });
+        offset: 0
+    };
+    //локальный стейт фильтров
+    const [localStateFilter, setLocalStateFilter] = useState();
+    //глобальный стейт фильтров
+    const respFilter = useSelector(state => state.resp.respFilter);
+    //стейт для списка пользователей
+    const [userFilter, setUserFilter] = useState([]);
+    //для фильтра создал/изменил
+    const users = useSelector(state => state.users.usersList);
+    const getUsersListLS = useSelector(state => state.users.getUsersListLS);
+    //пагинация
+    const pagination = useSelector(state => state.resp.pagination);
+
+    //при монтировании
+    useEffect(() => {
+        setLocalStateFilter(respFilter);
+        //делаем запрос
+        dispatch(getRespList({ ...respFilter, ...pagination }));
+    }, []);
+
+    //сброс фильтров
+    const resetFilter = async () => {
+        //сброс пагинации  
+        dispatch(clearPagination());
+        //чистим локальные фильтры
+        setLocalStateFilter(defaultLocalStateFilter);
+        //чистим фильтр в редаксе
+        dispatch(clearFilter());
+        //делаем запрос
+        dispatch(getRespList({ ...defaultLocalStateFilter, ...defaultStatePagination }));
+    }
+
+    //отправка фильтров
+    const submitFilter = async () => {
+        //сброс пагинации  
+        dispatch(clearPagination());
+        //кладем в редакс локальные фильтры
+        dispatch(setFilter(localStateFilter));
+        //делаем запрос с локальными фильтрами
+        dispatch(getRespList({ ...localStateFilter, ...defaultStatePagination }));
+    }
+
+    //изменение фильтров
+    const onChangeFilter = (e) => {
+        const { name, value } = e.target;
+
+        setLocalStateFilter(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    }
 
     //для фильтра активно
     const optionsIsActive = [
@@ -26,10 +73,7 @@ export const Filters = () => {
         { value: false, label: 'Нет' }
     ];
 
-    //для фильтра создал/изменил
-    const users = useSelector(state => state.users.usersList);
-    const getUsersListLS = useSelector(state => state.users.getUsersListLS);
-
+    //после получения списка пользователей
     useEffect(() => {
         if (users) {
             setUserFilter(users.map(u => {
@@ -41,61 +85,28 @@ export const Filters = () => {
         }
     }, [users])
 
+    //получение списка пользователей
     const onMenuOpen = () => {
         if (getUsersListLS === LOADING_STATUS.IDLE)
             dispatch(getUsersList())
-    }
-
-    const onChangeFilter = (e) => {
-        const { name, value } = e.target;
-
-        setFilter(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    }
-
-    const onSubmitFilter = async () => {
-        dispatch(getRespList(filter))
-    }
-
-    const onResetFilter = async () => {
-        //в отдельную переменную
-        //т.к. в диспатч уходят старые фильтры
-        //ибо setFilter асинхронная
-        const resetFilter = {
-            limit: 200,
-            offset: 0,
-            okpo: '',
-            resp_cred_id: '',
-            name: '',
-            is_active: null,
-            start_created_on_tz: null,
-            end_created_on_tz: null,
-            start_updated_on_tz: null,
-            end_updated_on_tz: null,
-            created_by: null,
-            updated_by: null
-        }
-
-        setFilter(resetFilter);
-        dispatch(getRespList(resetFilter))
     }
 
     return (
         <>
             <div className="ms-3 mt-3 d-flex align-items-center gap-2">
                 <button
-                    className="btn btn-outline"
+                    style={{border: 'none'}}
+                    className="btn btn-outline p-0"
                     data-bs-placement="top"
-                    title="Добавить"
-                    onClick={()=>{navigate("create")}}
+                    title="Добавить респондента"
+                    onClick={() => { navigate("create") }}
                 >
                     <i className="bi bi-plus-square fs-5 text-secondary"></i>
                 </button>
 
                 <a
-                    className="btn btn-outline"
+                    style={{border: 'none'}}
+                    className="btn btn-outline p-0 ms-3"
                     data-bs-toggle="collapse"
                     href="#collapseExample"
                     role="button"
@@ -122,7 +133,7 @@ export const Filters = () => {
                                     onChange={onChangeFilter}
                                     onWheel={(e) => e.target.blur()}
                                     min="0"
-                                    value={filter.okpo}
+                                    value={localStateFilter?.okpo || ""}
                                 />
                             </div>
                             <div className="col-lg-2">
@@ -134,7 +145,7 @@ export const Filters = () => {
                                     autoComplete="name"
                                     placeholder="Наименование респондента"
                                     onChange={onChangeFilter}
-                                    value={filter.name}
+                                    value={localStateFilter?.name || ""}
                                 />
                             </div>
                             <div className="col-lg-2">
@@ -148,19 +159,19 @@ export const Filters = () => {
                                     onWheel={(e) => e.target.blur()}
                                     min="0"
                                     onChange={onChangeFilter}
-                                    value={filter.resp_cred_id}
+                                    value={localStateFilter?.resp_cred_id || ""}
                                 />
                             </div>
                             <div className="col-lg-2">
                                 <CustomSelect
                                     options={optionsIsActive}
                                     onChange={(selectedOption) => {
-                                        setFilter(prev => ({
+                                        setLocalStateFilter(prev => ({
                                             ...prev,
                                             is_active: selectedOption ? selectedOption.value : null
                                         }));
                                     }}
-                                    value={optionsIsActive.find(opt => opt.value === filter.is_active) || null}
+                                    value={optionsIsActive.find(opt => opt.value === localStateFilter?.is_active) || null}
                                     placeholder="Активно"
                                 />
                             </div>
@@ -168,12 +179,12 @@ export const Filters = () => {
                                 <CustomSelect
                                     options={userFilter}
                                     onChange={(selectedOption) => {
-                                        setFilter(prev => ({
+                                        setLocalStateFilter(prev => ({
                                             ...prev,
                                             created_by: selectedOption ? selectedOption.value : null
                                         }));
                                     }}
-                                    value={userFilter.find(opt => opt.value === filter.created_by) || null}
+                                    value={userFilter.find(opt => opt.value === localStateFilter?.created_by) || null}
                                     placeholder="Создал"
                                     onMenuOpen={onMenuOpen}
                                 />
@@ -182,12 +193,12 @@ export const Filters = () => {
                                 <CustomSelect
                                     options={userFilter}
                                     onChange={(selectedOption) => {
-                                        setFilter(prev => ({
+                                        setLocalStateFilter(prev => ({
                                             ...prev,
                                             updated_by: selectedOption ? selectedOption.value : null
                                         }));
                                     }}
-                                    value={userFilter.find(opt => opt.value === filter.updated_by) || null}
+                                    value={userFilter.find(opt => opt.value === localStateFilter?.updated_by) || null}
                                     placeholder="Изменил"
                                     onMenuOpen={onMenuOpen}
                                 />
@@ -197,32 +208,32 @@ export const Filters = () => {
                         <div className="row mt-3">
                             <div className="col-lg-2">
                                 <CustomDatePicker
-                                    selected={filter.start_created_on_tz ? new Date(filter.start_created_on_tz) : null}
-                                    onChange={(date) => setFilter(prev => ({ ...prev, start_created_on_tz: date ? toLocalISOString(date) : date }))}
+                                    selected={localStateFilter?.start_created_on_tz ? new Date(localStateFilter?.start_created_on_tz) : null}
+                                    onChange={(date) => setLocalStateFilter(prev => ({ ...prev, start_created_on_tz: date ? toLocalISOString(date) : date }))}
                                     name="start_created_on_tz"
                                     placeholder="Дата создания с"
                                 />
                             </div>
                             <div className="col-lg-2">
                                 <CustomDatePicker
-                                    selected={filter.end_created_on_tz ? new Date(filter.end_created_on_tz) : null}
-                                    onChange={(date) => setFilter(prev => ({ ...prev, end_created_on_tz: date ? toLocalISOString(date) : date }))}
+                                    selected={localStateFilter?.end_created_on_tz ? new Date(localStateFilter?.end_created_on_tz) : null}
+                                    onChange={(date) => setLocalStateFilter(prev => ({ ...prev, end_created_on_tz: date ? toLocalISOString(date) : date }))}
                                     name="end_created_on_tz"
                                     placeholder="Дата создания по"
                                 />
                             </div>
                             <div className="col-lg-2">
                                 <CustomDatePicker
-                                    selected={filter.start_updated_on_tz ? new Date(filter.start_updated_on_tz) : null}
-                                    onChange={(date) => setFilter(prev => ({ ...prev, start_updated_on_tz: date ? toLocalISOString(date) : date }))}
+                                    selected={localStateFilter?.start_updated_on_tz ? new Date(localStateFilter?.start_updated_on_tz) : null}
+                                    onChange={(date) => setLocalStateFilter(prev => ({ ...prev, start_updated_on_tz: date ? toLocalISOString(date) : date }))}
                                     name="start_updated_on_tz"
                                     placeholder="Дата изменения с"
                                 />
                             </div>
                             <div className="col-lg-2">
                                 <CustomDatePicker
-                                    selected={filter.end_updated_on_tz ? new Date(filter.end_updated_on_tz) : null}
-                                    onChange={(date) => setFilter(prev => ({ ...prev, end_updated_on_tz: date ? toLocalISOString(date) : date }))}
+                                    selected={localStateFilter?.end_updated_on_tz ? new Date(localStateFilter?.end_updated_on_tz) : null}
+                                    onChange={(date) => setLocalStateFilter(prev => ({ ...prev, end_updated_on_tz: date ? toLocalISOString(date) : date }))}
                                     name="end_updated_on_tz"
                                     placeholder="Дата изменения по"
                                 />
@@ -233,11 +244,11 @@ export const Filters = () => {
                             <div className="col-lg-2">
                                 <button
                                     className="btn btn-outline-primary me-3"
-                                    onClick={onSubmitFilter}
+                                    onClick={submitFilter}
                                 >Применить</button>
                                 <button
                                     className="btn btn-outline-secondary"
-                                    onClick={onResetFilter}
+                                    onClick={resetFilter}
                                 >Очистить
                                 </button>
                             </div>

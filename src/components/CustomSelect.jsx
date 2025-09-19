@@ -1,14 +1,14 @@
 import Select from 'react-select';
 
-export const CustomSelect = ({options, onChange, name, value, placeholder, onMenuOpen, isClearable = true}) => { 
+export const CustomSelect = ({ options, onChange, name, value, placeholder, onMenuOpen, isClearable = true }) => {
     const customStyles = {
         control: (provided, state) => ({
             ...provided,
             borderColor: state.isFocused
-                ? '#86b7fe' 
-                : '#ced4da', 
+                ? '#86b7fe'
+                : '#ced4da',
             boxShadow: state.isFocused ? '0 0 0 0.25rem rgba(13, 110, 253, 0.25)' : 'none',
-            borderRadius: '0.375rem', 
+            borderRadius: '0.375rem',
             padding: '0rem 0.375rem 0rem 0.75rem ',
             fontSize: '1rem',
             backgroundColor: '#fff',
@@ -16,7 +16,8 @@ export const CustomSelect = ({options, onChange, name, value, placeholder, onMen
             minHeight: '38px',
             display: 'flex',
             alignItems: 'center',
-            width: '100%'
+            width: '100%',
+            maxWidth: '500px'
         }),
 
         valueContainer: (provided) => ({
@@ -71,20 +72,18 @@ export const CustomSelect = ({options, onChange, name, value, placeholder, onMen
     };
 
     return (
-        <div>
-            <Select
-                id="react-select"
-                instanceId="react-select"
-                options={options}
-                placeholder={placeholder}
-                noOptionsMessage={() => 'Не найдено'}
-                styles={customStyles}    
-                isClearable={isClearable}    
-                onChange={onChange}      
-                name={name}  
-                value={value} 
-                onMenuOpen={onMenuOpen}
-            />
-        </div>
+        <Select
+            id="react-select"
+            instanceId="react-select"
+            options={options}
+            placeholder={placeholder}
+            noOptionsMessage={() => 'Не найдено'}
+            styles={customStyles}
+            isClearable={isClearable}
+            onChange={onChange}
+            name={name}
+            value={value}
+            onMenuOpen={onMenuOpen}
+        />
     );
 }

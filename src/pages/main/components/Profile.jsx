@@ -1,20 +1,34 @@
 import { useNavigate } from 'react-router-dom';
 import profileImg from "../../../../public/icon/profile.png"
-import { getProfile } from '../../../store/profile/profileSlice';
+import { authLogout } from "../../../store/auth/authSlice.js";
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { LOADING_STATUS } from '../../../constants/loadingStatus';
+import { Spinner } from "../../../components/Spinner";
+import { clearProfile } from '../../../store/profile/profileSlice.js';
 
 export const Profile = () => {
 	const navigate = useNavigate();
-	const status = useSelector(state => state.profile.status);
-	const login = useSelector(state => state.profile.userData?.login)
+
+	const login = useSelector(state => state.profile.profile?.login);
+
+	const authLS = useSelector(state => state.auth.authLS);
+	const isAuth = useSelector(state => state.auth.isAuth?.isAuth);
 
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		if (status === "idle")
-			dispatch(getProfile());
-	})
+		//если 200 и false, то редиректим	
+		if (authLS === LOADING_STATUS.SUCCESS && !isAuth) {
+			navigate("/auth/login");
+			//чистим стейт профидя при выходе
+			dispatch(clearProfile());
+		}
+	}, [authLS])
+
+	const onLogout = () => {
+		dispatch(authLogout());
+	}
 
 	return (
 		<>
@@ -56,9 +70,7 @@ export const Profile = () => {
 							<button
 								className="dropdown-item"
 								type="button"
-								onClick={() => {
-									navigate("/auth/login")
-								}}
+								onClick={onLogout}
 							>
 								<span style={{ fontSize: '15px' }}>Выход</span>
 							</button>

@@ -11,8 +11,7 @@ export const Spinner = ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: '8px',
+    alignItems: 'center',    
     zIndex: 10,
   } }) => {
   return (

@@ -6,7 +6,9 @@ import { NotFoundPage } from "./pages/notFound/NotFoundPage";
 import { PageTitle } from "./components/PageTitle";
 import { RespDetailPage } from "./pages/resp/respDetail/RespDetailPage";
 import { CreateRespPage } from "./pages/resp/create/CreateRespPage";
-import { EditRespPage } from "./pages/resp/edit/EditRespPage";
+import { AdminPage } from "./pages/admin/AdminPage";
+import { UsersPage } from "./pages/users/UsersPage";
+import {CreateUserPage} from "./pages/users/create/CreateUserPage";
 
 export const router = createBrowserRouter(
     [
@@ -57,20 +59,30 @@ export const router = createBrowserRouter(
                         </>)
                 },
                 {
-                    path: "resp/edit/:resp_cred_id",
+                    path: "admin",
                     element: (
                         <>
-                            <EditRespPage />
-                            <PageTitle title={"Редактирование респондента"} />
-                        </>)
-                },
-                {
-                    path: "resp/:resp_cred_id/edit/:resp_cred_id",
-                    element: (
-                        <>
-                            <EditRespPage />
-                            <PageTitle title={"Редактирование респондента"} />
-                        </>)
+                            <AdminPage />
+                            <PageTitle title={"Администрирование"} />
+                        </>),
+                    children: [
+                        {
+                            path: "users",
+                            element: (
+                                <>
+                                    <UsersPage />
+                                    <PageTitle title={"Пользователи"} />
+                                </>)
+                        },
+                        {
+                            path: "users/create",
+                            element: (
+                                <>
+                                    <CreateUserPage />
+                                    <PageTitle title={"Создание пользователя"} />
+                                </>)
+                        },
+                    ]
                 }
             ]
         },

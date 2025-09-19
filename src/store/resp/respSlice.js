@@ -28,8 +28,41 @@ const initialState = {
     //редактирование
     editRespLS: LOADING_STATUS.IDLE,
     editedResp: null,
-    editRespError: null
+    editRespError: null,
+
+    //фильтры
+    respFilter: null,
+
+    //пагинация
+    pagination: {
+        limit: 200,
+        offset: 0
+    },
+
+    //логи
+    getRespCredLogLS: LOADING_STATUS.IDLE,
+    getRespCredLogError: null,
+    respCredLog: null,
+    respCredLogPagination: {
+        limit: 200,
+        offset: 0
+    }    
 }
+
+export const getRespCredLog = createAsyncThunk(
+    "resp/getRespCredLog",
+    async (params, { rejectWithValue }) => {
+        try {
+            const { resp_cred_id, ...query } = params;
+            const queryString = createQueryString(query);
+            const responce = await get(`/resp/${params.resp_cred_id}/log${queryString}`);
+            return responce;
+        } catch (error) {
+            const err = handleErrorReject(error);
+            return rejectWithValue(err);
+        }
+    }
+)
 
 export const getRespList = createAsyncThunk(
     "resp/getRespList",
@@ -87,7 +120,7 @@ export const createResp = createAsyncThunk(
 export const editResp = createAsyncThunk(
     "resp/editResp",
     async (resp, { rejectWithValue }) => {
-        try {            
+        try {
             const responce = await put(`/resp/${resp.resp_cred_id}`, resp);
             return responce;
         } catch (error) {
@@ -120,6 +153,49 @@ const respSlice = createSlice({
             state.editRespLS = LOADING_STATUS.IDLE;
             state.editedResp = null;
             state.editRespError = null;
+        },
+
+        //для очистки стейта деталей 
+        clearDetailResp(state) {
+            state.getRespDetailLS = LOADING_STATUS.IDLE;
+            state.getRespDetailError = null;
+            state.respDetail = null;
+        },
+
+        //установка фильтров
+        setFilter(state, action) {
+            state.respFilter = action.payload;
+        },
+
+        //сброс фильтров
+        clearFilter(state) {
+            state.respFilter = null;
+        },
+
+        //пагинация списка респондентов
+        setPagination(state, action) {
+            state.pagination = action.payload;
+        },
+
+        //очистка пагинации списка респондентов
+        clearPagination(state) {
+            state.pagination = {
+                limit: 200,
+                offset: 0
+            }
+        },
+
+        //пагинация списка респондентов
+        setPaginationRespCredLog(state, action) {
+            state.respCredLogPagination = action.payload;
+        },
+
+        //очистка пагинации списка респондентов
+        clearPaginationRespCredLog(state) {
+            state.respCredLogPagination = {
+                limit: 200,
+                offset: 0
+            }
         }
     },
     extraReducers(builder) {
@@ -188,9 +264,32 @@ const respSlice = createSlice({
                 state.editRespLS = LOADING_STATUS.FAIL
                 state.editRespError = action.payload
             })
+
+            //логи          
+            .addCase(getRespCredLog.pending, (state) => {
+                state.getRespCredLogLS = LOADING_STATUS.IN_PROGRESS
+            })
+            .addCase(getRespCredLog.fulfilled, (state, action) => {
+                state.getRespCredLogLS = LOADING_STATUS.SUCCESS
+                state.respCredLog = action.payload
+            })
+            .addCase(getRespCredLog.rejected, (state, action) => {
+                state.getRespCredLogLS = LOADING_STATUS.FAIL
+                state.getRespCredLogError = action.payload
+            })
     },
 }
 )
 
-export const { clearGetRespPassword, clearCreateResp, clearEditResp } = respSlice.actions
+export const {
+    clearGetRespPassword,
+    clearCreateResp,
+    clearEditResp,
+    setFilter,
+    clearFilter,
+    setPagination,
+    clearPagination,
+    clearDetailResp,
+    setPaginationRespCredLog,
+    clearPaginationRespCredLog } = respSlice.actions
 export default respSlice.reducer;

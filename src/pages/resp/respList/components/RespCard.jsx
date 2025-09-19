@@ -1,12 +1,9 @@
 import { Link } from "react-router-dom";
 import { IsoToLocaleDate } from "../../../../components/IsoToLocaleDate";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-
 
 export const RespCard = ({ resp }) => {
-    const userData = useSelector(state => state.profile.userData);
-    const navigate = useNavigate();
+    const profile = useSelector(state => state.profile.profile);
 
     return (
         <>
@@ -39,7 +36,7 @@ export const RespCard = ({ resp }) => {
                         <p className="mb-0">
                             <span className="text-secondary">Создал: </span>
                             <Link className="text-decoration-none"
-                                to={userData.user_id === resp.created_by ? '/profile' : '/users'}>
+                                to={profile.user_id === resp.created_by ? '/profile' : '/users'}>
                                 {resp.created_by_str}
                             </Link>
                         </p>
@@ -47,7 +44,7 @@ export const RespCard = ({ resp }) => {
                             <span className="text-secondary">Изменил: </span>
                             {resp.updated_by_str ?
                                 <Link className="text-decoration-none"
-                                    to={userData.user_id === resp.updated_by ? '/profile' : '/users'}>
+                                    to={profile.user_id === resp.updated_by ? '/profile' : '/users'}>
                                     {resp.updated_by_str}
                                 </Link>
                                 : "Не указано"}
@@ -60,10 +57,8 @@ export const RespCard = ({ resp }) => {
                 </td>
                 <td>
                     <button
-                        className="btn btn-outline-primary btn-sm"
-                        onClick={() => navigate(`edit/${resp.resp_cred_id}`)}
-                    >Редактировать</button>
-                    <button className="btn btn-outline-danger btn-sm ms-1">Удалить</button>
+                        className="btn btn-outline-primary"
+                        onClick={()=> console.log(resp.resp_cred_id)}>Войти</button>
                 </td>
             </tr>
         </>

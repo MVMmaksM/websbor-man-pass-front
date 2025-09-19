@@ -5,6 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { LOADING_STATUS } from "../../../../constants/loadingStatus.js";
 import { Spinner } from "../../../../components/Spinner.jsx";
 import { useNavigate } from "react-router-dom";
+import { setAlert } from "../../../../store/alert/alertSlice.js";
+import { ALERT_TYPES } from "../../../../store/alert/alertTypes.js";
+import { getOrganizaton, clearOrganization } from "../../../../store/gs/gsSlice.js";
+import { usePrevious } from "../../../../hooks/usePrevious.jsx";
 
 export const CreateRespForm = () => {
     const navigate = useNavigate();
@@ -17,17 +21,29 @@ export const CreateRespForm = () => {
         comment: '',
         is_active: true
     });
+    const prevOkpo = usePrevious(newResp.okpo);
     const createRespLS = useSelector(state => state.resp.createRespLS);
     const createdResp = useSelector(state => state.resp.createdResp);
+    //gs
+    const getOrganizatonLS = useSelector(state => state.gs.getOrganizatonLS);
+    const organization = useSelector(state => state.gs.organization);
+
+    //успешно создано
+    useEffect(() => {
+        if (createRespLS === LOADING_STATUS.SUCCESS) {
+            navigate(`/main/resp/${createdResp.resp_cred_id}`);
+            dispatch(setAlert({ type: ALERT_TYPES.SUCCESS, message: "Запись успешно создана" }));
+        }
+    }, [createRespLS]);
 
     useEffect(() => {
-        if (createRespLS === LOADING_STATUS.SUCCESS)
-            navigate(`/main/resp/${createdResp.resp_cred_id}`);
-
         return () => {
+            //чистим стейт создания
             dispatch(clearCreateResp());
+            //чистим стейт организации
+            dispatch(clearOrganization());
         };
-    }, [createRespLS]);
+    }, [])
 
     const onChangeCreateResp = (e) => {
         const { name, value } = e.target;
@@ -53,6 +69,15 @@ export const CreateRespForm = () => {
         { value: false, label: 'Нет' }
     ];
 
+    //получение инфы об организации
+    //при потере фокуса с ОКПО
+    const handleBlurOkpo = () => {
+        //если предыдущее ОКПО отличается от текущего и 
+        //текущее ОКПО не пустое
+        if (prevOkpo !== newResp.okpo && newResp.okpo !== "")
+            dispatch(getOrganizaton({ okpo: newResp.okpo }))
+    }
+
     return (
         <>
             {createRespLS === LOADING_STATUS.IN_PROGRESS ? <Spinner /> : ""}
@@ -66,6 +91,7 @@ export const CreateRespForm = () => {
                             minHeight: '60px',
                             boxSizing: 'border-box',
                             width: '100%',
+                            height: '100%'
                         }}
                     >
                         <form onSubmit={handleSubmit}>
@@ -95,6 +121,7 @@ export const CreateRespForm = () => {
                                             placeholder="ОКПО"
                                             onChange={onChangeCreateResp}
                                             onWheel={(e) => e.target.blur()}
+                                            onBlur={handleBlurOkpo}
                                             min="0"
                                         />
                                     </div>
@@ -138,7 +165,7 @@ export const CreateRespForm = () => {
                                         }}
                                         value={optionsIsActive.find(opt => opt.value === newResp.is_active) || null}
                                         placeholder="Активно"
-                                        isClearable = {false}
+                                        isClearable={false}
                                     />
                                 </div>
                             </div>
@@ -167,6 +194,7 @@ export const CreateRespForm = () => {
                     </div>
                 </div>
 
+                {/* данные из webstat*/}
                 <div className="col-lg-6">
                     <div
                         className="p-3"
@@ -176,19 +204,106 @@ export const CreateRespForm = () => {
                             minHeight: '70px',
                             boxSizing: 'border-box',
                             width: '100%',
+                            height: '100%'
                         }}
                     >
-                        <div className="mb-2">
-                            <span className="text-secondary">Последнее изменение</span>
-                        </div>
-                        <div className="mb-2">
-                            <span className="text-secondary">Изменил</span>
-                            <span> </span>
-                        </div>
-                        <div className="mb-2">
-                            <span className="text-secondary">Активно</span>
-                            <span> </span>
-                        </div>
+                        <span className="text-center text-muted">
+                            <h6>Данные о кодах статистики</h6>
+                        </span>
+
+                        {getOrganizatonLS === LOADING_STATUS.IN_PROGRESS &&
+                            <Spinner color={'primary'}
+                                divStyle={{
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    display: 'flex',
+                                    height: '100%'
+                                }}
+                                spinnerStyle={{ width: '30px', height: '30px' }} />}
+
+                        {getOrganizatonLS === LOADING_STATUS.SUCCESS && organization &&
+                            <>
+
+                                <div className="row mb-3">
+                                    <div className="col-auto">
+                                        <span className="text-secondary">Полное наименование</span>
+                                        <span> {organization?.full_name ?? "Не найдено"}</span>
+                                    </div>
+                                </div>
+
+                                <div className="row mb-3">
+                                    <div className="col-auto">
+                                        <span className="text-secondary">Краткое наименование</span>
+                                        <span> {organization?.short_name ?? "Не найдено"}</span>
+                                    </div>
+                                </div>
+
+                                <div className="row g-3 mb-3">
+                                    <div className="col-auto">
+                                        <span className="text-secondary">ОКПО</span>
+                                        <span> {organization?.okpo ?? "Не найдено"}</span>
+                                    </div>
+                                    <div className="col-auto">
+                                        <span className="text-secondary">ОГРН / ОГРНИП</span>
+                                        <span> {organization?.ogrn ?? "Не найдено"}</span>
+                                    </div>
+                                    <div className="col-auto">
+                                        <span className="text-secondary">Дата регистрации</span>
+                                        <span> {organization?.date_reg ?? "Не найдено"}</span>
+                                    </div>
+                                    <div className="col-auto">
+                                        <span className="text-secondary">ИНН</span>
+                                        <span> {organization?.inn ?? "Не найдено"}</span>
+                                    </div>
+                                </div>
+
+                                <div className="row mb-3 g-3">
+                                    <div className="col-auto">
+                                        <span className="text-secondary">ОКАТО фактический</span>
+                                        <span> {organization?.okato_fact ?? "Не найдено"}</span>
+                                    </div>
+                                    <div className="col-auto">
+                                        <span className="text-secondary">ОКАТО регистрации</span>
+                                        <span> {organization?.okato_reg ?? "Не найдено"}</span>
+                                    </div>
+                                </div>
+
+                                <div className="row mb-3 g-3">
+                                    <div className="col-auto">
+                                        <span className="text-secondary">ОКТМО фактический</span>
+                                        <span> {organization?.oktmo_fact ?? "Не найдено"}</span>
+                                    </div>
+                                    <div className="col-auto">
+                                        <span className="text-secondary">ОКТМО регистрации</span>
+                                        <span> {organization?.oktmo_reg ?? "Не найдено"}</span>
+                                    </div>
+                                </div>
+
+                                <div className="row mb-3 g-3">
+                                    <div className="col-auto">
+                                        <span className="text-secondary">ОКОГУ</span>
+                                        <span> {organization?.okogu ?? "Не найдено"}</span>
+                                    </div>
+                                    <div className="col-auto">
+                                        <span className="text-secondary">ОКФС</span>
+                                        <span> {organization?.okfs ?? "Не найдено"}</span>
+                                    </div>
+                                </div>
+
+                                <div className="row mb-3">
+                                    <div className="col-auto">
+                                        <span className="text-secondary">ОКОПФ</span>
+                                        <span> {organization?.okopf ?? "Не найдено"}</span>
+                                    </div>
+                                </div>
+                            </>}
+
+                        {getOrganizatonLS === LOADING_STATUS.SUCCESS && !organization &&
+                            <>
+                                <div className="text-center p-5">
+                                    Данные не найдены
+                                </div>
+                            </>}
                     </div>
                 </div>
             </div>

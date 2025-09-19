@@ -14,8 +14,8 @@ export const AuthPage = () => {
     const onLoginChanged = (e) => setLogin(e.target.value);
     const onPasswordChanged = (e) => setPassword(e.target.value);
 
-    const loginLS = useSelector(state => state.auth.loginLS);
-    const isLogin = useSelector(state => state.auth?.loginStatus?.isLogin);
+    const authLS = useSelector(state => state.auth.authLS);
+    const isAuth = useSelector(state => state.auth?.isAuth?.isAuth);
 
     const checkAuthLS = useSelector(state => state.auth.checkAuthLS)
     const checkAuthStatus = useSelector(state => state.auth?.checkAuthStatus?.isAuth);
@@ -32,18 +32,18 @@ export const AuthPage = () => {
     }
 
     useEffect(() => {
-        if (checkAuthLS === LOADING_STATUS.IDLE)
-            dispatch(checkAuth());
+        dispatch(checkAuth());
+    }, [])
 
-        //если аутентифицирован, то редиректим с ауфа на маин
-        if (checkAuthStatus)
+    useEffect(() => {
+        //проверяем статус аутентификации, если ок, то редиректим на main
+        if (checkAuthLS === LOADING_STATUS.SUCCESS && isAuth)
             navigate('/main');
-        //если вернулось 200 и isLogin=== true
-        //редиректим на main
-        if (loginLS === LOADING_STATUS.SUCCESS && isLogin)
+        //если вернулось 200 и isAuth=== true
+        //редиректим на main     
+        if (authLS === LOADING_STATUS.SUCCESS && isAuth)
             navigate('/main');
-
-    }, [loginLS, checkAuth, checkAuthStatus])
+    }, [isAuth])
 
     return (
         <div className="d-flex flex-column min-vh-100">
@@ -101,7 +101,7 @@ export const AuthPage = () => {
                         </div>
                     </form>
                 </div>
-                {loginLS === LOADING_STATUS.IN_PROGRESS ? <Spinner /> : ""}
+                {authLS === LOADING_STATUS.IN_PROGRESS ? <Spinner /> : ""}
             </div>
         </div>
 
