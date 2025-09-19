@@ -1,0 +1,20 @@
+#main_nav_panel {
+	align-items: center;
+}
+
+#main_nav_panel a {
+	padding: 10px;
+	font: 15px Arial;
+	text-decoration: none;
+	color: black;
+}
+
+#main_nav_panel a:hover,
+#main_nav_panel a.active {
+	color: black;
+	background-color: #e9ebee;
+}
+
+.dropdown-menu {
+	z-index: 1060 !important;
+}

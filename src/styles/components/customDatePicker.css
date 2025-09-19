@@ -1,0 +1,21 @@
+#custom_date {
+	position: relative;
+	width: 100%;
+	cursor: pointer;
+}
+
+#custom_date_icon {
+	position: absolute;
+	left: 8px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: #6c757d;
+	font-size: 14px;
+	pointer-events: none;
+}
+
+#custom_date_input {
+	padding-left: 32px;
+	height: 38px;
+	line-height: 1.5;
+}

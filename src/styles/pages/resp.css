@@ -1,0 +1,52 @@
+.table-container {
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	background-color: white;
+}
+
+#table-resp th {
+	text-align: left;
+	font-size: 15px;
+}
+
+.resp-col-id {
+	width: 100px;
+}
+
+.resp-col-okpo {
+	width: 100px;
+}
+
+.resp-col-name {
+	width: 500px;
+}
+
+.resp-col-date {
+	width: 400px;
+}
+
+.resp-col-user {
+	width: 200px;
+}
+
+.resp-col-is-active {
+	width: 100px;
+}
+
+#table-resp tbody tr {
+	transition: background-color 0.2s ease;
+	text-align: left;
+	font-size: 15px;
+}
+
+#table-resp tbody tr:hover {
+	background-color: #f1f3f5 !important;
+}
+
+#table-resp tbody td {
+	padding: 0px 10px;
+	vertical-align: middle;
+	white-space: normal;
+	height: auto;
+}
